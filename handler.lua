@@ -40,12 +40,24 @@ return function(c, network, host, port)
 	gsym()
 	req.atype=b(gsym())
 	print('Request cmd: ',req.cmd,'; Request address type: ',req.atype)
-	if req.atype==3 then
-		print('Receiving domain!')
-		req.domain=c:receive(b(gsym()))
+	if req.atype==3 or req.atype==1 or req.atype==4 then
+		print('Receiving target!')
+		if req.atype==3 then
+			req.target=c:receive(b(gsym()))
+		elseif req.atype==1 then
+			--[[local h=''
+			for i=1,4 do
+				h=h..b(gsym())
+				if i<4 then h=h..'.' end
+			end]]
+			
+			req.target=c:receive(4)
+		elseif req.atype==4 then
+			req.target=c:receive(16)
+		end
 		local pnum1,pnum2=b(gsym()),b(gsym())
 		req.port=pnum1*256+pnum2
-		print('Domain is '..req.domain,';port is ',req.port)
+		print('Target is '..req.target,';port is ',req.port)
 		req.res=0
 		--req.success=true
 	else
